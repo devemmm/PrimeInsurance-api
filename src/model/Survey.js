@@ -1,24 +1,30 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const surveySchema = mongoose.Schema({
-    service:{
-        type: String,
-        required: true,
-        required: true
+const surveySchema = mongoose.Schema(
+  {
+    service: {
+      type: String,
+      required: true,
+      required: true,
     },
-    quetion:{
-        type: String,
-        trim: true,
-        required: true
+    questions: [
+      {
+        question: {
+          type: String,
+          trim: true,
+        },
+      },
+    ],
+    creator: {
+      type: String,
+      trim: true,
+      required: true,
     },
-    creator:{
-        type: String,
-        trim: true,
-        required: true
-    },
-}, {
-    timestamps: true
-});
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const Survey = mongoose.model('Survey', surveySchema);
-module.exports = Survey
+const Survey = mongoose.model("Survey", surveySchema);
+module.exports = Survey;

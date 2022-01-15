@@ -1,9 +1,15 @@
 const express = require("express");
 const {
   index,
-  signin,
-  subSurvey,
   createUser,
+  signin,
+  createNewServey,
+  newQuestion,
+  deleteService,
+  findAllUser,
+  updateAccount,
+  respondServey,
+  surveyStatistics,
 } = require("../controller/AppController");
 
 const route = express.Router();
@@ -14,22 +20,18 @@ route.post("/signin", signin);
 
 route.post("/create/user", createUser);
 
-route.get("/survey", (req, res) => {
-  res.render("survey");
-});
+route.post("/survey/register/newservice", createNewServey);
 
-route.post("/survey", (req, res) => {
-  console.log({ survey: req.body });
+route.patch("/survey/register/newquestion", newQuestion);
 
-  res.redirect("/home");
-});
+route.delete("/survey/:service", deleteService);
 
-route.get("/users-list", (req, res) => {
-  res.render("users-list");
-});
+route.get("/admin/users", findAllUser);
 
-route.get("/profile", (req, res) => {
-  res.render("profile");
-});
+route.patch("/users/update", updateAccount);
+
+route.post("/users/respond/survey", respondServey);
+
+route.get("/admin/survey/statistics", surveyStatistics);
 
 module.exports = route;
