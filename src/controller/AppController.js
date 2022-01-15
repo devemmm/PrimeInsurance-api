@@ -182,26 +182,17 @@ const respondServey = [
         throw new Error("missing some required information");
       }
 
-      // const surveyResponse = new SurveyResponse({
-      //   service,
-      //   response,
-      //   customerName: name,
-      //   customerPhone: phone,
-      // });
+      response.forEach(async (response) => {
+        let surveyResponse = new SurveyResponse({
+          service,
+          question: response.question,
+          answer: response.answer,
+          customerName: name,
+          customerPhone: phone,
+        });
 
-      // -------------------------TESTING------------------------
-
-      let surveyResponse = new SurveyResponse({
-        service: "Moto Vehiclee",
-        question: "do you like Moto Vehiclee service?",
-        answer: 4,
-        customerName: "Emmanuel",
-        customerPhone: "0788596281",
+        await surveyResponse.save();
       });
-
-      // -----------------------END-TESTING------------------------
-
-      await surveyResponse.save();
       res.json({ status: 200, message: "successfull" });
     } catch (error) {
       res.status(400).send({ error: { message: error.message } });
