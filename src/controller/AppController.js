@@ -101,6 +101,42 @@ const createNewServey = [
   },
 ];
 
+const findAllService = [
+  async (req, res) => {
+    try {
+      const service = await Service.find({});
+
+      res.status(200).json({ status: 200, message: "successfull", service });
+    } catch (error) {
+      res.status(400).send({ error: { message: error.message } });
+    }
+  },
+];
+
+const findServey = [
+  async (req, res) => {
+    try {
+      const survey = await Survey.find({ service: req.params.service });
+
+      res.status(200).json({ status: 200, message: "successfull", survey });
+    } catch (error) {
+      res.status(400).send({ error: { message: error.message } });
+    }
+  },
+];
+
+const findServeyResponses = [
+  async (req, res) => {
+    try {
+      const surveyResponses = await SurveyResponse.find({});
+      res
+        .status(200)
+        .json({ status: 200, message: "successfull", surveyResponses });
+    } catch (error) {
+      res.status(400).send({ error: { message: error.message } });
+    }
+  },
+];
 const newQuestion = [
   requireAuth,
   async (req, res) => {
@@ -165,10 +201,33 @@ const findAllUser = [
 const updateAccount = [
   requireAuth,
   async (req, res) => {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = [
+      "fname",
+      "lname",
+      "country",
+      "phone",
+      "avatar",
+      "password",
+    ];
+    const isValidOperation = updates.every((update) =>
+      allowedUpdates.includes(update)
+    );
+
+    if (!isValidOperation) {
+      return res.status(400).send({ error: "Invalid Update" });
+    }
+
     try {
-      res.json({ status: 200, message: "successfull" });
+      updates.forEach((update) => (req.user[update] = req.body[update]));
+      await req.user.save();
+
+      res.send(req.user);
     } catch (error) {
-      res.status(400).send({ error: { message: error.message } });
+      if (error.kind === "ObjectId") {
+        return res.status(400).send({ error: "Invalid Object id" });
+      }
+      return res.status(500).send(error);
     }
   },
 ];
@@ -251,6 +310,9 @@ module.exports = {
   index,
   signin,
   createUser,
+  findAllService,
+  findServey,
+  findServeyResponses,
   createNewServey,
   newQuestion,
   deleteService,

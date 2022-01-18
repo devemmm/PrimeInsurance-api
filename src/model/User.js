@@ -38,7 +38,7 @@ const userSchema = mongoose.Schema(
     avatar: {
       type: String,
       trim: true,
-      default: `${process.env.SITE_URL}/images/avatar/default-avatar.jpg`,
+      default: `${process.env.SITE_URL}/images/0default_avatar.png`,
     },
     tokens: [
       {
