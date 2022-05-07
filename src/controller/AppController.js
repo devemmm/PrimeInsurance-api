@@ -1,8 +1,13 @@
+const fs = require("fs");
+const nodemailer = require("nodemailer");
+var json2xls = require("json2xls");
 const Survey = require("../model/Survey");
 const Service = require("../model/Service");
 const User = require("../model/User");
 const requireAuth = require("../middleware/requireAuth");
 const SurveyResponse = require("../model/SurveyResponse");
+const filename = "prime-insurance-report.xlsx";
+
 const subSurvey = [
   (req, res) => {
     res.send("hello");
@@ -119,6 +124,77 @@ const findServey = [
       const survey = await Survey.find({ service: req.params.service });
 
       res.status(200).json({ status: 200, message: "successfull", survey });
+    } catch (error) {
+      res.status(400).send({ error: { message: error.message } });
+    }
+  },
+];
+
+const convert = function (responses) {
+  var xls = json2xls(responses);
+  fs.writeFileSync(filename, xls, "binary", (err) => {
+    if (err) {
+      console.log("writeFileSync :", err);
+    }
+    console.log(filename + " file is saved!");
+  });
+};
+
+const generateReport = [
+  requireAuth,
+  async (req, res) => {
+    try {
+      const survey = await SurveyResponse.find({});
+
+      convert(survey);
+
+      const output = `
+            <p>Prime Insurance Analysis Tool System Report</p>
+            <h3>Contact Details</h3>
+            <ul>
+                <li>Name: Prime Insurance Analysis Tool System</li>
+                <li>Email: diella@prime.rw</li>
+                <li>Phone: +250 785 063 340</li>
+            </ul>
+            <h3>Message</h3>
+            <p>This is the report of survey resposes generated at ${new Date()}</p>
+        `;
+
+      let transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.PASSWORD,
+        },
+      });
+
+      // Step 2
+      let mailOptions = {
+        from: "primaryemmy@gmail.com",
+        to: `${req.user.email}`,
+        to: `ipacy0002@gmail.com`,
+        subject: "Prime Insurance Analysis Tool System Report",
+        text: "heading",
+        html: output,
+        attachments: [
+          {
+            filename: "prime-insurance-report.xlsx",
+            path: "./prime-insurance-report.xlsx",
+          },
+        ],
+      };
+
+      // Step 3
+      transporter.sendMail(mailOptions, function (err, data) {
+        if (err) {
+          return res.send({ error: err });
+        }
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: "report sent to your email please check...",
+      });
     } catch (error) {
       res.status(400).send({ error: { message: error.message } });
     }
@@ -313,6 +389,7 @@ module.exports = {
   findAllService,
   findServey,
   findServeyResponses,
+  generateReport,
   createNewServey,
   newQuestion,
   deleteService,

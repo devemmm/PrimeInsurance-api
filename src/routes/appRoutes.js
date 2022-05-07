@@ -5,6 +5,7 @@ const {
   signin,
   findAllService,
   findServey,
+  generateReport,
   findServeyResponses,
   createNewServey,
   newQuestion,
@@ -26,6 +27,8 @@ route.post("/create/user", createUser);
 route.get("/services", findAllService);
 
 route.get("/responses/survey", findServeyResponses);
+
+route.get("/responses/survey/report", generateReport);
 
 route.get("/survey/:service", findServey);
 
