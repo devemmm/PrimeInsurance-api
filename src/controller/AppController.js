@@ -171,9 +171,8 @@ const generateReport = [
 
       // Step 2
       let mailOptions = {
-        from: "primaryemmy@gmail.com",
+        from: process.env.EMAIL,
         to: `${req.user.email}`,
-        to: `ipacy0002@gmail.com`,
         subject: "Prime Insurance Analysis Tool System Report",
         text: "heading",
         html: output,
