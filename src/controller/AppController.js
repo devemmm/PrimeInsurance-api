@@ -331,14 +331,14 @@ const respondServey = [
       });
 
       if (comment !== null) {
-        const comment = new Comment({
+        const comments = new Comment({
           service,
           customerName: name,
           customerPhone: phone,
           message: comment,
         });
 
-        await comment.save();
+        await comments.save();
       }
       res.json({ status: 200, message: "successfull" });
     } catch (error) {
