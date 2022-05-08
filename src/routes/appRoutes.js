@@ -13,6 +13,7 @@ const {
   findAllUser,
   updateAccount,
   respondServey,
+  getComment,
   surveyStatistics,
 } = require("../controller/AppController");
 
@@ -27,6 +28,8 @@ route.post("/create/user", createUser);
 route.get("/services", findAllService);
 
 route.get("/responses/survey", findServeyResponses);
+
+route.get("/responses/survey/comment", getComment);
 
 route.get("/responses/survey/report", generateReport);
 

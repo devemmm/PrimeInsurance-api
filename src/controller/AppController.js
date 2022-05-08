@@ -4,6 +4,7 @@ var json2xls = require("json2xls");
 const Survey = require("../model/Survey");
 const Service = require("../model/Service");
 const User = require("../model/User");
+const Comment = require("../model/Comment");
 const requireAuth = require("../middleware/requireAuth");
 const SurveyResponse = require("../model/SurveyResponse");
 const filename = "prime-insurance-report.xlsx";
@@ -311,7 +312,7 @@ const updateAccount = [
 const respondServey = [
   async (req, res) => {
     try {
-      const { name, phone, service, response } = req.body;
+      const { name, phone, service, response, comment } = req.body;
 
       if (!name || !phone || !service || !response) {
         throw new Error("missing some required information");
@@ -328,7 +329,29 @@ const respondServey = [
 
         await surveyResponse.save();
       });
+
+      if (comment !== null) {
+        const comment = new Comment({
+          service,
+          customerName: name,
+          customerPhone: phone,
+          message: comment,
+        });
+
+        await comment.save();
+      }
       res.json({ status: 200, message: "successfull" });
+    } catch (error) {
+      res.status(400).send({ error: { message: error.message } });
+    }
+  },
+];
+
+const getComment = [
+  async (req, res) => {
+    try {
+      const comment = await Comment.find({});
+      res.json({ status: 200, message: "successfull", comment });
     } catch (error) {
       res.status(400).send({ error: { message: error.message } });
     }
@@ -396,5 +419,6 @@ module.exports = {
   findAllUser,
   updateAccount,
   respondServey,
+  getComment,
   surveyStatistics,
 };
