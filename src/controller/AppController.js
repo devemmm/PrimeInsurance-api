@@ -368,7 +368,7 @@ const analy = (data, service, type) => {
   };
 };
 const surveyStatistics = [
-  requireAuth,
+  // requireAuth,
   async (req, res) => {
     try {
       const services = [];
